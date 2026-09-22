@@ -167,6 +167,24 @@ button {
   text-wrap: balance;
 }
 
+/* La felicitación va siempre en un solo renglón: el tamaño se ajusta al ancho
+   disponible (≈13.2em de texto) y gana 12px por lado de margen. */
+.hero {
+  container-type: inline-size;
+}
+
+.hero__question--single {
+  margin-inline: -12px;
+  white-space: nowrap;
+  letter-spacing: -0.025em;
+  font-size: min(2.1rem, calc((100vw - 20px) / 13.2));
+  font-size: min(2.3rem, calc((100cqi + 24px) / 13.2));
+}
+
+.hero__question--single .emoji {
+  font-size: 0.85em;
+}
+
 .hero__sub {
   margin: 10px 0 0;
   font-size: 1.15rem;
