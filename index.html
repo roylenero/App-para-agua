@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Agua para Fernanda</title>
+  <meta name="description" content="Un pequeño recordatorio para tomar agua.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#eef5fc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Agua">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true">
+    <span class="blob blob--sky"></span>
+    <span class="blob blob--lavender"></span>
+  </div>
+
+  <main class="app">
+    <!-- 1–2. Saludo (se sustituye por la felicitación al cumplir la meta) -->
+    <header class="hero" id="hero">
+      <div class="hero__view hero__view--greeting" id="greeting">
+        <p class="hero__hello">Hola <span data-name>Fernanda</span>,</p>
+        <h1 class="hero__question">¿ya tomaste agua? <span class="emoji" aria-hidden="true">🤔</span></h1>
+      </div>
+      <div class="hero__view hero__view--done" id="congrats" hidden>
+        <h1 class="hero__question">¡Felicidades, <span data-name>Fernanda</span>! <span class="emoji" aria-hidden="true">💧✨</span></h1>
+        <p class="hero__sub">Cumpliste tu meta de hoy.<br>Eres increíble.</p>
+      </div>
+    </header>
+
+    <p class="goal-pill">Meta de hoy: <strong id="goal-label">2 L</strong></p>
+
+    <!-- 3. Recipiente -->
+    <section class="vessel" aria-label="Progreso de hoy">
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <div class="vessel__stage" id="vessel"
+           role="progressbar" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="0"
+           aria-valuetext="0 ml de 2000 ml">
+        <svg class="glass" viewBox="0 0 220 340" aria-hidden="true" focusable="false">
+          <defs>
+            <clipPath id="glass-inner">
+              <path d="M36 31 H184 L166.2 297 Q165 315 147 315 H73 Q55 315 53.8 297 Z"/>
+            </clipPath>
+            <linearGradient id="glass-body" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
+              <stop offset=".55" stop-color="#f3f8fe" stop-opacity=".9"/>
+              <stop offset="1" stop-color="#e9f2fc" stop-opacity=".95"/>
+            </linearGradient>
+            <linearGradient id="water-front" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" class="stop-water-top"/>
+              <stop offset="1" class="stop-water-bottom"/>
+            </linearGradient>
+          </defs>
+
+          <!-- sombra en el piso -->
+          <ellipse class="glass__floor" cx="110" cy="330" rx="62" ry="6"/>
+
+          <!-- cuerpo del vaso -->
+          <path class="glass__body" d="M28 24 H192 L173.6 299 Q172 322 150 322 H70 Q48 322 46.4 299 Z"/>
+
+          <!-- agua -->
+          <g clip-path="url(#glass-inner)">
+            <g class="water" id="water">
+              <g class="wave wave--back"><path id="wave-back"/></g>
+              <g class="wave wave--front"><path id="wave-front" fill="url(#water-front)"/></g>
+            </g>
+            <g id="bubbles"></g>
+          </g>
+
+          <!-- marcas de medida: 500 / 1000 / 1500 ml -->
+          <g class="glass__ticks">
+            <line x1="152" x2="166" y1="244.5" y2="244.5"/>
+            <line x1="146" x2="168" y1="173" y2="173"/>
+            <line x1="152" x2="170" y1="102" y2="102"/>
+          </g>
+
+          <!-- reflejo -->
+          <path class="glass__shine" d="M50 52 L61 262"/>
+          <path class="glass__shine glass__shine--soft" d="M66 52 L70 120"/>
+
+          <!-- contorno -->
+          <path class="glass__rim" d="M28 24 H192 L173.6 299 Q172 322 150 322 H70 Q48 322 46.4 299 Z"/>
+        </svg>
+        <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- 4–5. Cantidad y porcentaje -->
+    <section class="readout" aria-live="polite" aria-atomic="true">
+      <p class="readout__amount">
+        <span class="readout__ml" id="amount">0</span>
+        <span class="readout__goal">/ <span id="goal-ml">2000</span> ml</span>
+      </p>
+      <p class="readout__percent" id="percent">0%</p>
+      <p class="readout__note" id="note">Un vasito para empezar el día 💧</p>
+    </section>
+
+    <!-- 6–8. Acciones -->
+    <section class="actions" aria-label="Registrar agua">
+      <div class="quick" id="quick"></div>
+
+      <button type="button" class="btn-soft" id="custom-toggle" aria-expanded="false" aria-controls="custom-form">
+        Agregar otra cantidad
+      </button>
+
+      <form class="custom" id="custom-form" hidden novalidate>
+        <label class="custom__label" for="custom-input">¿Cuántos mililitros?</label>
+        <div class="custom__row">
+          <div class="custom__field">
+            <input id="custom-input" type="number" inputmode="numeric" pattern="[0-9]*"
+                   min="1" max="3000" step="1" placeholder="Ej. 330" autocomplete="off"
+                   aria-describedby="custom-error">
+            <span class="custom__unit" aria-hidden="true">ml</span>
+          </div>
+          <button type="submit" class="btn-add">Agregar</button>
+        </div>
+        <p class="custom__error" id="custom-error" aria-live="polite"></p>
+        <button type="button" class="btn-link" id="custom-cancel">Cancelar</button>
+      </form>
+
+      <button type="button" class="btn-undo" id="undo" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+        <span id="undo-label">Deshacer</span>
+      </button>
+    </section>
+
+    <!-- Historial -->
+    <section class="week">
+      <button type="button" class="week__toggle" id="week-toggle" aria-expanded="false" aria-controls="week-panel">
+        Tu semana
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="week__panel" id="week-panel">
+        <div class="week__inner">
+          <ol class="week__days" id="week-days"></ol>
+          <p class="week__summary" id="week-summary"></p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="signature">hecho con cariño, solo para ti</footer>
+  </main>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
